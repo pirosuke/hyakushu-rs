@@ -8,7 +8,7 @@ mostly_misanswered_questions as (
     and not answered_correctly
     group by waka_id
     order by count desc
-    limit $2
+    limit ($2 / 2)::int
 )
 ,random_questions as (
     select

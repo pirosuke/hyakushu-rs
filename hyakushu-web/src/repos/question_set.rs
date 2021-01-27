@@ -19,7 +19,7 @@ pub struct QuestionSet {
     questions: Vec<Question>,
 }
 
-pub fn generate_question_set(player_id: i32, num_of_questions: i64, pg_client: &mut PooledConnection<PostgresConnectionManager<postgres::NoTls>>) -> QuestionSet {
+pub fn generate_question_set(player_id: i32, num_of_questions: i32, pg_client: &mut PooledConnection<PostgresConnectionManager<postgres::NoTls>>) -> QuestionSet {
     // wakasからnum_of_questions分のwakaを取得する
     // その際、自分の最近の解答回数が少ない質問、間違いが多い回答を優先して取得する
     let select_question_sql = include_str!("../sql/question_sets/select_questions_for_new_set.sql");

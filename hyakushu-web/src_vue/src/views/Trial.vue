@@ -2,7 +2,7 @@
   <v-container>
     <v-card>
       <v-card-title>
-        {{questionNumber}}/{{totalQuestionNum}} {{targetQuestion.waka.kamino_ku}}
+        {{questionIndex}}/{{totalQuestionNum}} {{targetQuestion.waka.kamino_ku}}
         <v-spacer></v-spacer>
       </v-card-title>
 
@@ -12,6 +12,10 @@
 
       <v-card-title v-if="showCorrectAnswerMessage">
         正解!
+      </v-card-title>
+
+      <v-card-title v-if="showEndedMessage">
+        おわり！ 正解率は {{correctAnswerNum}}/{{totalQuestionNum}} でした。
       </v-card-title>
 
       <v-card-text>
@@ -53,7 +57,7 @@
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1" v-if="mode === 'question'" @click="handleAnswer">答える</v-btn>
         <v-btn color="blue darken-1" v-if="mode === 'next'" @click="nextQuestion">次へ</v-btn>
-        <v-btn color="blue darken-1" v-if="editedIndex === -1" @click="addItem">結果を見る</v-btn>
+        <v-btn color="blue darken-1" v-if="mode === 'end'" @click="reload">もう一度挑戦する</v-btn>
       </v-card-actions>
     </v-card>
   </v-container>
@@ -67,7 +71,8 @@
       return {
         questionSet: {},
         totalQuestionNum: 10,
-        questionNumber: 0,
+        correctAnswerNum: 0,
+        questionIndex: 0,
         targetQuestion: {
           waka: {
             waka_id: 0,
@@ -80,6 +85,7 @@
         selectedAnswer: "",
         showWrongAnswerMessage: false,
         showCorrectAnswerMessage: false,
+        showEndedMessage: false,
         mode: "question",
       }
     },
@@ -100,11 +106,11 @@
         }),
     },
     methods: {
+      reload() {
+        this.$router.go({path: this.$router.currentRoute.path, force: true});
+      },
       handleAnswer() {
-        this.mode = "next"
         let isCorrectAnswer = false
-        console.log(this.targetQuestion)
-        console.log(this.selectedAnswer)
         if (this.targetQuestion.waka.shimono_ku === this.selectedAnswer) {
           isCorrectAnswer = true
         }
@@ -115,20 +121,31 @@
           this.showWrongAnswerMessage = true
         }
 
+        if (isCorrectAnswer) {
+          this.correctAnswerNum += 1
+        }
+
         this.$store.dispatch('question_sets/addAnswerLog', {
           player_id: '99',
           question_set_id: this.questionSet.question_set_id,
           waka_id: this.targetQuestion.waka.waka_id,
           answered_correctly: isCorrectAnswer,
         })
-      },
+
+        if (this.questionIndex >= this.totalQuestionNum) {
+          this.mode = "end"
+          this.showEndedMessage = true
+        } else {
+          this.mode = "next"
+        }
+    },
       nextQuestion () {
         this.mode = "question"
         this.showCorrectAnswerMessage = false
         this.showWrongAnswerMessage = false
         this.selectedAnswer = ""
-        this.questionNumber += 1
-        this.targetQuestion = this.questionSet.questions[this.questionNumber]
+        this.targetQuestion = this.questionSet.questions[this.questionIndex]
+        this.questionIndex += 1
       },
     }
   }

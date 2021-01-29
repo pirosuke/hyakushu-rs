@@ -23,13 +23,13 @@ app_config.json の内容を更新します。
 ```json
 {
     "public_dir_path": "hyakushu-web/public",
-    "server_host": "127.0.0.1:8080", -- Webアプリを起動するポート
+    "server_host": "127.0.0.1:8080(Webアプリを起動するポート)",
     "db": {
-        "host": "localhost", -- データベースホスト
-        "port": "5432", -- データベースポート
-        "db_name": "hyakushu", -- データベース名
-        "user_name": "dbuser", -- データベースユーザー名
-        "password": "dbpassword" -- データベースパスワード
+        "host": "localhost(データベースホスト)",
+        "port": "5432(データベースポート)",
+        "db_name": "hyakushu(データベース名)",
+        "user_name": "dbuser(データベースユーザー名)",
+        "password": "dbpassword(データベースパスワード)"
     }
 }
 ```
